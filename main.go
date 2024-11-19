@@ -1,23 +1,26 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
-	
+
 	"github.com/peileiscott/gee"
 )
 
 func main() {
 	r := gee.New()
-	r.GET("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "URL.Path = %q\n", r.URL.Path)
+	r.GET("/", func(c *gee.Context) {
+		c.String(http.StatusOK, "Hello World!\n")
 	})
 
-	r.GET("/hello", func(w http.ResponseWriter, r *http.Request) {
-		for k, v := range r.Header {
-			fmt.Fprintf(w, "Header[%q] = %q\n", k, v)
-		}
+	r.POST("/ping", func(c *gee.Context) {
+		c.JSON(http.StatusCreated, gee.H{
+			"message": "pong",
+		})
+	})
+
+	r.GET("/html", func(c *gee.Context) {
+		c.HTML(http.StatusOK, "<h1>Hello World</h1>")
 	})
 
 	if err := r.Run(":9999"); err != nil {
